@@ -2,10 +2,12 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:h2:file:~/.h2/DBName;AUTO_SERVER=TRUE
+    url: jdbc:h2:mem:DBName
     driverClassName: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
   h2:
     console:
       enabled: true
+flyway:
+  location: classpath:db/migration

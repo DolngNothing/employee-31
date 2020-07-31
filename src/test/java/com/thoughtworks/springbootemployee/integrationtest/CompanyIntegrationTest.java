@@ -82,7 +82,6 @@ public class CompanyIntegrationTest {
         employeeRepository.saveAll(employees);
         //System.out.println(savedCompany.getEmployees());
         //when
-        //todo mapped=companyId 会拿不到列表
         mockMvc.perform(get("/companies/" + savedCompany.getId() + "/employees"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
