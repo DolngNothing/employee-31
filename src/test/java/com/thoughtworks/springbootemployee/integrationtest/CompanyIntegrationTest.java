@@ -72,12 +72,15 @@ public class CompanyIntegrationTest {
     @Test
     void should_return_employee_when_hit_companies_endpoint_given_company_id() throws Exception {
         //given
+        Company company = new Company(1, "oocw",null);
+        Company savedCompany = companyRepository.save(company);
         List<Employee> employees = Arrays.asList(new Employee(1, 18, "male", "xxx", 1000),
                 new Employee(2, 18, "female", "xxx", 10000));
-        List<Employee> savedEmployees = employeeRepository.saveAll(employees);
-        Company company = new Company(1, "oocw", savedEmployees);
-        Company savedCompany = companyRepository.save(company);
-        System.out.println(savedCompany.getEmployees());
+        for(Employee employee:employees){
+            employee.setCompanyId(savedCompany.getId());
+        }
+        employeeRepository.saveAll(employees);
+        //System.out.println(savedCompany.getEmployees());
         //when
         //todo mapped=companyId 会拿不到列表
         mockMvc.perform(get("/companies/" + savedCompany.getId() + "/employees"))

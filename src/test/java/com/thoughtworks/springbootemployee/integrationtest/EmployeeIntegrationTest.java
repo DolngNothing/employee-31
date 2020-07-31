@@ -37,7 +37,7 @@ public class EmployeeIntegrationTest {
     @Test
     void should_return_all_employees_when_hit_employees_endpoint_given_nothing() throws Exception {
         //given
-        List<Employee> employees = Arrays.asList(new Employee(1, 18, "male", "xxx", 1000));
+        List<Employee> employees = Collections.singletonList(new Employee(1, 18, "male", "xxx", 1000));
         employeeRepository.saveAll(employees);
 
         mockMvc.perform(get("/employees"))
