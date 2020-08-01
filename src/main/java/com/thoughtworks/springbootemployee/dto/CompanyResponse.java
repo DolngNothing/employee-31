@@ -1,26 +1,22 @@
-package com.thoughtworks.springbootemployee.model;
+package com.thoughtworks.springbootemployee.dto;
 
-import javax.persistence.*;
+import com.thoughtworks.springbootemployee.model.Employee;
+
 import java.util.List;
 
-@Entity
-public class Company {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+public class CompanyResponse {
     private Integer id;
     private String name;
-    @OneToMany(cascade = {CascadeType.ALL},mappedBy = "companyId")
     private List<Employee> employees;
     private Integer employeeNumber;
 
-    public Company() {
+    public CompanyResponse() {
     }
 
-    public Company(Integer id, String name, List<Employee> employees) {
+    public CompanyResponse(Integer id, String name, List<Employee> employees) {
         this.id = id;
         this.name = name;
         this.employees = employees;
-        this.employeeNumber=(employees==null?null:employees.size());
     }
 
     public Integer getEmployeeNumber() {
@@ -51,5 +47,4 @@ public class Company {
     public void setName(String name) {
         this.name = name;
     }
-
 }
