@@ -2,7 +2,9 @@ package com.thoughtworks.springbootemployee.service;
 
 import com.thoughtworks.springbootemployee.dto.CompanyRequest;
 import com.thoughtworks.springbootemployee.dto.CompanyResponse;
+import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
 import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
 import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
 import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
 import com.thoughtworks.springbootemployee.model.Company;
@@ -11,6 +13,7 @@ import com.thoughtworks.springbootemployee.repository.CompanyRepository;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -134,5 +138,18 @@ public class CompanyServiceTest {
 
         //then
         verify(companyRepository).deleteById(1);
+    }
+
+    @Test
+    void should_throw_NoSuchDataException_when_find_by_id_given_wrong_employee_id() {
+        //given
+        CompanyRepository companyRepository = Mockito.mock(CompanyRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository);
+        given(companyRepository.findById(1)).willReturn(Optional.of(new Company(1,"oocl",null)));
+
+        //when
+
+        //then
+        assertThrows(NoSuchDataException.class, () -> companyService.findCompanyByID(2));
     }
 }

@@ -3,6 +3,7 @@ package com.thoughtworks.springbootemployee.service;
 import com.thoughtworks.springbootemployee.dto.CompanyRequest;
 import com.thoughtworks.springbootemployee.dto.CompanyResponse;
 import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
 import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
 import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
 import com.thoughtworks.springbootemployee.model.Company;
@@ -22,11 +23,14 @@ public class CompanyService {
 
 
     private final CompanyRepository companyRepository;
-    private final EmployeeRepository employeeRepository;
 
     public CompanyService(CompanyRepository companyRepository, EmployeeRepository employeeRepository) {
         this.companyRepository = companyRepository;
-        this.employeeRepository = employeeRepository;
+        EmployeeRepository employeeRepository1 = employeeRepository;
+    }
+
+    public CompanyService(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
     }
 
     public List<CompanyResponse> findAllCompanies() {
@@ -34,7 +38,10 @@ public class CompanyService {
     }
 
     public CompanyResponse findCompanyByID(Integer companyID) {
-        return CompanyMapper.map(this.companyRepository.findById(companyID).orElse(null));
+        Company company = this.companyRepository.findById(companyID).orElse(null);
+
+
+        return CompanyMapper.map(company);
     }
 
     public List<EmployeeResponse> findEmployeesByCompanyID(Integer companyID) {
