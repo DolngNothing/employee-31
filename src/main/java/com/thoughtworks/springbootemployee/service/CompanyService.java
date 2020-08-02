@@ -22,16 +22,22 @@ import java.util.stream.Collectors;
 public class CompanyService {
 
 
-    private final CompanyRepository companyRepository;
+    private CompanyRepository companyRepository;
+    private EmployeeRepository employeeRepository;
 
-    public CompanyService(CompanyRepository companyRepository, EmployeeRepository employeeRepository) {
-        this.companyRepository = companyRepository;
-        EmployeeRepository employeeRepository1 = employeeRepository;
+    public CompanyService() {
     }
 
     public CompanyService(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
+
+    public CompanyService(CompanyRepository companyRepository, EmployeeRepository employeeRepository) {
+        this.companyRepository = companyRepository;
+        this.employeeRepository=employeeRepository;
+
+    }
+
 
     public List<CompanyResponse> findAllCompanies() {
         return companyRepository.findAll().stream().map(CompanyMapper::map).collect(Collectors.toList());
@@ -44,8 +50,12 @@ public class CompanyService {
         return CompanyMapper.map(company);
     }
 
-    public List<EmployeeResponse> findEmployeesByCompanyID(Integer companyID) {
-        return this.companyRepository.findById(companyID).orElse(null).getEmployees().stream().map(EmployeeMapper::map).collect(Collectors.toList());
+    public List<EmployeeResponse> findEmployeesByCompanyID(Integer companyID) throws NoSuchDataException {
+        Company company = this.companyRepository.findById(companyID).orElse(null);
+        if(company==null) throw new NoSuchDataException();
+        List<Employee> employees = company.getEmployees();
+        if(employees==null) throw new NoSuchDataException();
+        return employees.stream().map(EmployeeMapper::map).collect(Collectors.toList());
     }
 
     public Page<CompanyResponse> findCompaniesByPageAndPageSize(int page, int pageSize) {

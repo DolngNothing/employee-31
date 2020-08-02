@@ -34,7 +34,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}/employees")
-    List<EmployeeResponse> getEmployeesByCompanyId(@PathVariable("id") Integer id) {
+    List<EmployeeResponse> getEmployeesByCompanyId(@PathVariable("id") Integer id) throws NoSuchDataException {
         return this.companyService.findEmployeesByCompanyID(id);
     }
 

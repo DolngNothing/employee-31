@@ -62,7 +62,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void should_return_employees_when_find_employees_given_company_id() {
+    void should_return_employees_when_find_employees_given_company_id() throws NoSuchDataException {
         //given
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
@@ -141,7 +141,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void should_throw_NoSuchDataException_when_find_by_id_given_wrong_employee_id() {
+    void should_throw_NoSuchDataException_when_find_by_id_given_wrong_company_id() {
         //given
         CompanyRepository companyRepository = Mockito.mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository);
@@ -151,5 +151,18 @@ public class CompanyServiceTest {
 
         //then
         assertThrows(NoSuchDataException.class, () -> companyService.findCompanyByID(2));
+    }
+
+    @Test
+    void should_throw_NoSuchDataException_when_find_employees_by_company_id_given_wrong_company_id() {
+        //given
+        CompanyRepository companyRepository = Mockito.mock(CompanyRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository);
+        given(companyRepository.findById(1)).willReturn(Optional.of(new Company(1,"oocl",null)));
+
+        //when
+
+        //then
+        assertThrows(NoSuchDataException.class, () -> companyService.findCompanyByID(1));
     }
 }
