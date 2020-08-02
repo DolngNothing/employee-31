@@ -1,7 +1,10 @@
 package com.thoughtworks.springbootemployee.service;
 
+import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
 import com.thoughtworks.springbootemployee.exception.IllegalOperationException;
 import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
+import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
@@ -13,10 +16,14 @@ import org.springframework.data.domain.PageRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
+
 
 public class EmployeeServiceTest {
 
@@ -29,10 +36,10 @@ public class EmployeeServiceTest {
                 new Employee(3, 24, "male", "gradle", 12000));
         given(employeeRepository.findAll()).willReturn(employees);
         //when
-        List<Employee> foundEmployees = employeeService.findAll();
+        List<EmployeeResponse> foundEmployees = employeeService.findAll();
 
         //then
-        assertEquals(employees, foundEmployees);
+        assertEquals(employees.stream().map(EmployeeMapper::map).collect(Collectors.toList()), foundEmployees);
     }
 
     @Test
@@ -46,10 +53,10 @@ public class EmployeeServiceTest {
         given(employeeRepository.findAll(PageRequest.of(1, 2))).willReturn(employees);
 
         //when
-        Page<Employee> employeesByPageAndPageSize = employeeService.findEmployeesByPageAndPageSize(1, 2);
+        Page<EmployeeResponse> employeesByPageAndPageSize = employeeService.findEmployeesByPageAndPageSize(1, 2);
 
         //then
-        assertEquals(employees, employeesByPageAndPageSize);
+        assertEquals(new PageImpl<>(employees.stream().map(EmployeeMapper::map).collect(Collectors.toList())), employeesByPageAndPageSize);
         //verify(employeeRepository).findAll(PageRequest.of(1,2));
     }
 
@@ -62,9 +69,9 @@ public class EmployeeServiceTest {
                 new Employee(2, 19, "female", "eva", 1000));
         given(employeeRepository.findAllByGender("female")).willReturn(employees);
         //when
-        List<Employee> employeesByGender = employeeService.findEmployeesByGender("female");
+        List<EmployeeResponse> employeesByGender = employeeService.findEmployeesByGender("female");
         //then
-        assertEquals(employees, employeesByGender);
+        assertEquals(employees.stream().map(EmployeeMapper::map).collect(Collectors.toList()), employeesByGender);
     }
 
     @Test
@@ -75,9 +82,9 @@ public class EmployeeServiceTest {
         Employee employee = new Employee(2, 19, "female", "eva", 1000);
         given(employeeRepository.findById(2)).willReturn(Optional.of(employee));
         //when
-        Employee employeeByID = employeeService.findEmployeeByID(2);
+        EmployeeResponse employeeByID = employeeService.findEmployeeByID(2);
         //then
-        assertEquals(employee, employeeByID);
+        assertEquals(EmployeeMapper.map(employee), employeeByID);
     }
 
     @Test
@@ -85,14 +92,14 @@ public class EmployeeServiceTest {
         //given
         EmployeeRepository employeeRepository = Mockito.mock(EmployeeRepository.class);
         EmployeeService employeeService = new EmployeeService(employeeRepository);
-        Employee employee = new Employee(2, 19, "female", "eva", 1000);
-        given(employeeRepository.save(employee)).willReturn(employee);
+        EmployeeRequest employee = new EmployeeRequest(2, 19, "female", "eva", 1000);
+        given(employeeRepository.save(any(Employee.class))).willReturn(EmployeeMapper.map(employee));
 
         //when
-        Employee createdEmployee = employeeService.addEmployee(employee);
+        EmployeeResponse createdEmployee = employeeService.addEmployee(employee);
 
         //then
-        assertEquals(employee, createdEmployee);
+        assertEquals(EmployeeMapper.map(EmployeeMapper.map(employee)), createdEmployee);
     }
 
     @Test
@@ -103,8 +110,9 @@ public class EmployeeServiceTest {
         given(employeeRepository.findById(2)).willReturn(Optional.of(new Employee(2, 18, "female", "chris", 9999)));
 
         //when
-        Employee updatedEmployee = new Employee(2, 18, "female", "eva", 1000);
-        Employee employee = employeeService.update(2, updatedEmployee);
+        EmployeeRequest updatedEmployee = new EmployeeRequest(2, 18, "female", "eva", 1000);
+        given(employeeRepository.save(any(Employee.class))).willReturn(EmployeeMapper.map(updatedEmployee));
+        EmployeeResponse employee = employeeService.update(2, updatedEmployee);
 
         //then
         assertEquals(2, employee.getId());
@@ -121,7 +129,7 @@ public class EmployeeServiceTest {
         given(employeeRepository.findById(1)).willReturn(Optional.of(new Employee(2, 18, "female", "chris", 9999)));
 
         //when
-        Employee updatedEmployee = new Employee(2, 18, "female", "eva", 1000);
+        EmployeeRequest updatedEmployee = new EmployeeRequest(2, 18, "female", "eva", 1000);
 
         //then
         assertThrows(NoSuchDataException.class, () -> employeeService.update(2, updatedEmployee));
@@ -135,7 +143,7 @@ public class EmployeeServiceTest {
         given(employeeRepository.findById(2)).willReturn(Optional.of(new Employee(2, 18, "female", "chris", 9999)));
 
         //when
-        Employee updatedEmployee = new Employee(1, 18, "female", "eva", 1000);
+        EmployeeRequest updatedEmployee = new EmployeeRequest(1, 18, "female", "eva", 1000);
 
         //then
         assertThrows(IllegalOperationException.class, () -> employeeService.update(2, updatedEmployee));

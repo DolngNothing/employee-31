@@ -1,5 +1,7 @@
 package com.thoughtworks.springbootemployee.controller;
 
+import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
 import com.thoughtworks.springbootemployee.exception.IllegalOperationException;
 import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
 import com.thoughtworks.springbootemployee.model.Employee;
@@ -23,33 +25,33 @@ public class EmployeeController {
 
 
     @GetMapping()
-    public List<Employee> getAllEmployees() {
+    public List<EmployeeResponse> getAllEmployees() {
         return this.employeeService.findAll();
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    public Page<Employee> getAllEmployeesByPageAndSize(Integer page, Integer pageSize) {
+    public Page<EmployeeResponse> getAllEmployeesByPageAndSize(Integer page, Integer pageSize) {
         return this.employeeService.findEmployeesByPageAndPageSize(--page,pageSize);
     }
 
     @GetMapping(params = {"gender"})
-    public List<Employee> getAllEmployeesByGender(String gender) {
+    public List<EmployeeResponse> getAllEmployeesByGender(String gender) {
         return this.employeeService.findEmployeesByGender(gender);
     }
 
     @GetMapping("/{id}")
-    public Employee getEmployee(@PathVariable("id") Integer id) throws NoSuchDataException {
+    public EmployeeResponse getEmployee(@PathVariable("id") Integer id) throws NoSuchDataException {
         return this.employeeService.findEmployeeByID(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Employee addEmployee(@RequestBody Employee employee) {
+    EmployeeResponse addEmployee(@RequestBody EmployeeRequest employee) {
         return this.employeeService.addEmployee(employee);
     }
 
     @PutMapping("/{id}")
-    Employee updateEmployee(@RequestBody Employee newEmployee, @PathVariable("id") Integer id) throws NoSuchDataException, IllegalOperationException {
+    EmployeeResponse updateEmployee(@RequestBody EmployeeRequest newEmployee, @PathVariable("id") Integer id) throws NoSuchDataException, IllegalOperationException {
         return this.employeeService.update(id, newEmployee);
     }
 

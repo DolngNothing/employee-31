@@ -1,5 +1,7 @@
 package com.thoughtworks.springbootemployee.dto;
 
+import java.util.Objects;
+
 public class EmployeeResponse {
     private Integer id;
     private Integer companyId;
@@ -75,5 +77,23 @@ public class EmployeeResponse {
 
     public void setSalary(Integer salary) {
         this.salary = salary;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmployeeResponse that = (EmployeeResponse) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(companyId, that.companyId) &&
+                Objects.equals(age, that.age) &&
+                Objects.equals(gender, that.gender) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(salary, that.salary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, companyId, age, gender, name, salary);
     }
 }

@@ -2,7 +2,9 @@ package com.thoughtworks.springbootemployee.dto;
 
 import com.thoughtworks.springbootemployee.model.Employee;
 
+import javax.persistence.Column;
 import java.util.List;
+import java.util.Objects;
 
 public class CompanyResponse {
     private Integer id;
@@ -17,6 +19,11 @@ public class CompanyResponse {
         this.id = id;
         this.name = name;
         this.employees = employees;
+    }
+
+    public CompanyResponse(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Integer getEmployeeNumber() {
@@ -46,5 +53,21 @@ public class CompanyResponse {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CompanyResponse that = (CompanyResponse) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(employees, that.employees) &&
+                Objects.equals(employeeNumber, that.employeeNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, employees, employeeNumber);
     }
 }

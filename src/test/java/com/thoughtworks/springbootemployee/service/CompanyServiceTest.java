@@ -1,9 +1,15 @@
 package com.thoughtworks.springbootemployee.service;
 
+import com.thoughtworks.springbootemployee.dto.CompanyRequest;
+import com.thoughtworks.springbootemployee.dto.CompanyResponse;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
+import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
+import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,10 +38,10 @@ public class CompanyServiceTest {
         given(companyRepository.findAll()).willReturn(companies);
 
         //when
-        List<Company> allCompanies = companyService.findAllCompanies();
+        List<CompanyResponse> allCompanies = companyService.findAllCompanies();
 
         //then
-        assertEquals(companies, allCompanies);
+        assertEquals(companies.stream().map(CompanyMapper::map).collect(Collectors.toList()), allCompanies);
     }
 
     @Test
@@ -45,9 +52,9 @@ public class CompanyServiceTest {
         Company ooclCompany = new Company(1, "OOCL", null);
         given(companyRepository.findById(1)).willReturn(Optional.of(ooclCompany));
         //when
-        Company company = companyService.findCompanyByID(1);
+        CompanyResponse company = companyService.findCompanyByID(1);
         //then
-        assertEquals(ooclCompany, company);
+        assertEquals(CompanyMapper.map(ooclCompany), company);
     }
 
     @Test
@@ -60,9 +67,9 @@ public class CompanyServiceTest {
         Company company = new Company(1, "OOCL", employees);
         given(companyRepository.findById(1)).willReturn(Optional.of(company));
         //when
-        List<Employee> employeesByCompanyID = companyService.findEmployeesByCompanyID(1);
+        List<EmployeeResponse> employeesByCompanyID = companyService.findEmployeesByCompanyID(1);
         //then
-        assertEquals(employees, employeesByCompanyID);
+        assertEquals(employees.stream().map(EmployeeMapper::map).collect(Collectors.toList()), employeesByCompanyID);
     }
 
     @Test
@@ -74,10 +81,10 @@ public class CompanyServiceTest {
         given(companyRepository.findAll(PageRequest.of(1, 2))).willReturn(companies);
 
         //when
-        Page<Company> companiesByPageAndPageSize = companyService.findCompaniesByPageAndPageSize(1, 2);
+        Page<CompanyResponse> companiesByPageAndPageSize = companyService.findCompaniesByPageAndPageSize(1, 2);
 
         //then
-        assertEquals(companies, companiesByPageAndPageSize);
+        assertEquals(new PageImpl<>(companies.stream().map(CompanyMapper::map).collect(Collectors.toList())), companiesByPageAndPageSize);
     }
 
     @Test
@@ -85,14 +92,14 @@ public class CompanyServiceTest {
         //given
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
-        Company company = new Company(1, "OOCL", null);
-        given(companyRepository.save(company)).willReturn(company);
-
+        Company company = new Company(1, "OOCL",Collections.emptyList());
+        given(companyRepository.save(any(Company.class))).willReturn(company);
+        CompanyRequest companyRequest = new CompanyRequest(1, "OOCL",Collections.emptyList());
         //when
-        Company createdCompany = companyService.addCompany(company);
+        CompanyResponse createdCompany = companyService.addCompany(companyRequest);
 
         //then
-        assertEquals(company, createdCompany);
+        assertEquals(CompanyMapper.map(company), createdCompany);
     }
 
     @Test
@@ -101,10 +108,10 @@ public class CompanyServiceTest {
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
         given(companyRepository.findById(1)).willReturn(Optional.of(new Company(1, "OOCL", null)));
-        Company company = new Company(1, "CargoSmart", null);
+        CompanyRequest company = new CompanyRequest(1, "CargoSmart", null);
 
         //when
-        Company updatedCompany = companyService.updateCompany(1, company);
+        CompanyResponse updatedCompany = companyService.updateCompany(1, company);
 
         //then
         assertEquals(1, updatedCompany.getId());

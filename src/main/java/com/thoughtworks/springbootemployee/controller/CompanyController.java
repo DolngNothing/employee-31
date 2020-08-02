@@ -1,5 +1,9 @@
 package com.thoughtworks.springbootemployee.controller;
 
+import com.thoughtworks.springbootemployee.dto.CompanyRequest;
+import com.thoughtworks.springbootemployee.dto.CompanyResponse;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.service.CompanyService;
@@ -19,34 +23,34 @@ public class CompanyController {
     }
 
     @GetMapping()
-    List<Company> getCompanies() {
+    List<CompanyResponse> getCompanies() {
         return this.companyService.findAllCompanies();
     }
 
     @GetMapping("/{id}")
-    Company getCompanyById(@PathVariable("id") Integer id) {
+    CompanyResponse getCompanyById(@PathVariable("id") Integer id) {
         return this.companyService.findCompanyByID(id);
     }
 
     @GetMapping("/{id}/employees")
-    List<Employee> getEmployeesByCompanyId(@PathVariable("id") Integer id) {
+    List<EmployeeResponse> getEmployeesByCompanyId(@PathVariable("id") Integer id) {
         return this.companyService.findEmployeesByCompanyID(id);
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    Page<Company> getCompaniesByPageAndSize(int page, int pageSize) {
+    Page<CompanyResponse> getCompaniesByPageAndSize(int page, int pageSize) {
         return this.companyService.findCompaniesByPageAndPageSize(--page, pageSize);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    Company addCompany(@RequestBody Company company) {
-        return this.companyService.addCompany(company);
+    CompanyResponse addCompany(@RequestBody CompanyRequest companyRequest) {
+        return this.companyService.addCompany(companyRequest);
     }
 
     @PutMapping("/{id}")
-    Company updateCompany(@RequestBody Company newCompany, @PathVariable("id") Integer id) {
-        return this.companyService.updateCompany(id, newCompany);
+    CompanyResponse updateCompany(@RequestBody CompanyRequest newCompany, @PathVariable("id") Integer id) {
+        return this.companyService.updateCompany(id,newCompany);
     }
 
     @DeleteMapping("/{id}")

@@ -1,14 +1,21 @@
 package com.thoughtworks.springbootemployee.service;
 
+import com.thoughtworks.springbootemployee.dto.CompanyRequest;
+import com.thoughtworks.springbootemployee.dto.CompanyResponse;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
+import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
 import com.thoughtworks.springbootemployee.model.Company;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.CompanyRepository;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyService {
@@ -22,27 +29,29 @@ public class CompanyService {
         this.employeeRepository = employeeRepository;
     }
 
-    public List<Company> findAllCompanies() {
-        return this.companyRepository.findAll();
+    public List<CompanyResponse> findAllCompanies() {
+        return companyRepository.findAll().stream().map(CompanyMapper::map).collect(Collectors.toList());
     }
 
-    public Company findCompanyByID(Integer companyID) {
-        return this.companyRepository.findById(companyID).orElse(null);
+    public CompanyResponse findCompanyByID(Integer companyID) {
+        return CompanyMapper.map(this.companyRepository.findById(companyID).orElse(null));
     }
 
-    public List<Employee> findEmployeesByCompanyID(Integer companyID) {
-        return this.companyRepository.findById(companyID).orElse(null).getEmployees();
+    public List<EmployeeResponse> findEmployeesByCompanyID(Integer companyID) {
+        return this.companyRepository.findById(companyID).orElse(null).getEmployees().stream().map(EmployeeMapper::map).collect(Collectors.toList());
     }
 
-    public Page<Company> findCompaniesByPageAndPageSize(int page, int pageSize) {
-        return this.companyRepository.findAll(PageRequest.of(page,pageSize));
+    public Page<CompanyResponse> findCompaniesByPageAndPageSize(int page, int pageSize) {
+        return new PageImpl<>(this.companyRepository.findAll(PageRequest.of(page,pageSize)).stream().map(CompanyMapper::map).collect(Collectors.toList()));
     }
 
-    public Company addCompany(Company company) {
-        return this.companyRepository.save(company);
+    public CompanyResponse addCompany(CompanyRequest companyRequest) {
+        Company map = CompanyMapper.map(companyRequest);
+        Company save = this.companyRepository.save(map);
+        return CompanyMapper.map(save);
     }
 
-    public Company updateCompany(int companyID, Company newCompany) {
+    public CompanyResponse updateCompany(int companyID, CompanyRequest newCompany) {
         Company company = this.companyRepository.findById(companyID).orElse(null);
         if(newCompany!=null){
             if(newCompany.getName()!=null){
@@ -51,7 +60,7 @@ public class CompanyService {
             this.companyRepository.save(company);
         }
 
-        return company;
+        return CompanyMapper.map(company);
     }
 
     public void deleteCompanyByID(int companyID) {

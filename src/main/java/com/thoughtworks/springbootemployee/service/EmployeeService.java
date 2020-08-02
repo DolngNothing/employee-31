@@ -1,15 +1,20 @@
 package com.thoughtworks.springbootemployee.service;
 
+import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
+import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
 import com.thoughtworks.springbootemployee.exception.IllegalOperationException;
 import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
+import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
 import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.repository.EmployeeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -20,7 +25,7 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public Employee update(Integer employeeID, Employee updatedEmployee) throws IllegalOperationException, NoSuchDataException {
+    public EmployeeResponse update(Integer employeeID, EmployeeRequest updatedEmployee) throws IllegalOperationException, NoSuchDataException {
         Employee employee = employeeRepository.findById(employeeID).orElse(null);
         if (employee == null) {
             throw new NoSuchDataException();
@@ -29,32 +34,32 @@ public class EmployeeService {
             throw new IllegalOperationException();
         }
         BeanUtils.copyProperties(updatedEmployee, employee);
-        this.employeeRepository.save(employee);
-        return employee;
+
+        return EmployeeMapper.map(this.employeeRepository.save(employee));
     }
 
-    public List<Employee> findAll() {
-        return this.employeeRepository.findAll();
+    public List<EmployeeResponse> findAll() {
+        return this.employeeRepository.findAll().stream().map(EmployeeMapper::map).collect(Collectors.toList());
     }
 
-    public Page<Employee> findEmployeesByPageAndPageSize(int page, int pageSize) {
-        return this.employeeRepository.findAll(PageRequest.of(page, pageSize));
+    public Page<EmployeeResponse> findEmployeesByPageAndPageSize(int page, int pageSize) {
+        return new PageImpl<>(this.employeeRepository.findAll(PageRequest.of(page, pageSize)).stream().map(EmployeeMapper::map).collect(Collectors.toList()));
+}
+
+    public List<EmployeeResponse> findEmployeesByGender(String gender) {
+        return this.employeeRepository.findAllByGender(gender).stream().map(EmployeeMapper::map).collect(Collectors.toList());
     }
 
-    public List<Employee> findEmployeesByGender(String gender) {
-        return this.employeeRepository.findAllByGender(gender);
-    }
-
-    public Employee findEmployeeByID(Integer employeeID) throws NoSuchDataException {
+    public EmployeeResponse findEmployeeByID(Integer employeeID) throws NoSuchDataException {
         Employee foundEmployee = this.employeeRepository.findById(employeeID).orElse(null);
         if (foundEmployee == null) {
             throw new NoSuchDataException();
         }
-        return foundEmployee;
+        return EmployeeMapper.map(foundEmployee);
     }
 
-    public Employee addEmployee(Employee employee) {
-        return this.employeeRepository.save(employee);
+    public EmployeeResponse addEmployee(EmployeeRequest employee) {
+        return EmployeeMapper.map(this.employeeRepository.save(EmployeeMapper.map(employee)));
     }
 
     public void deleteEmployeeByID(Integer employeeID) {
