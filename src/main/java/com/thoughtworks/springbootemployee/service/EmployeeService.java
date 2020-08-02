@@ -42,7 +42,8 @@ public class EmployeeService {
         return this.employeeRepository.findAll().stream().map(EmployeeMapper::map).collect(Collectors.toList());
     }
 
-    public Page<EmployeeResponse> findEmployeesByPageAndPageSize(int page, int pageSize) {
+    public Page<EmployeeResponse> findEmployeesByPageAndPageSize(int page, int pageSize) throws IllegalOperationException {
+        if(page<0||pageSize<1) throw new IllegalOperationException();
         return new PageImpl<>(this.employeeRepository.findAll(PageRequest.of(page, pageSize)).stream().map(EmployeeMapper::map).collect(Collectors.toList()));
 }
 

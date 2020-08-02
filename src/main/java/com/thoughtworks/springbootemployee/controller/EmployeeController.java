@@ -30,7 +30,7 @@ public class EmployeeController {
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    public Page<EmployeeResponse> getAllEmployeesByPageAndSize(Integer page, Integer pageSize) {
+    public Page<EmployeeResponse> getAllEmployeesByPageAndSize(Integer page, Integer pageSize) throws IllegalOperationException {
         return this.employeeService.findEmployeesByPageAndPageSize(--page,pageSize);
     }
 

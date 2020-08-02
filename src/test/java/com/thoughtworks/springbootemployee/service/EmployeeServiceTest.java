@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+
 import static org.mockito.BDDMockito.given;
 
 
@@ -43,7 +43,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void should_get_page_employees_when_get_by_page_given_page_pageSize() {
+    void should_get_page_employees_when_get_by_page_given_page_pageSize() throws IllegalOperationException {
         //given
         EmployeeRepository employeeRepository = Mockito.mock(EmployeeRepository.class);
         EmployeeService employeeService = new EmployeeService(employeeRepository);
@@ -148,6 +148,20 @@ public class EmployeeServiceTest {
         //then
         assertThrows(IllegalOperationException.class, () -> employeeService.update(2, updatedEmployee));
     }
+
+    @Test
+    void should_throw_IllegalOperationException_when_get_by_page_given_page_pageSize() {
+        //given
+        EmployeeRepository employeeRepository = Mockito.mock(EmployeeRepository.class);
+        EmployeeService employeeService = new EmployeeService(employeeRepository);
+
+        //when
+
+        //then
+        assertThrows(IllegalOperationException.class, () -> employeeService.findEmployeesByPageAndPageSize(0,0));
+    }
+
+
 
     @Test
     void should_return_void_when_delete_given_employee_id() {
