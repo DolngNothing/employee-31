@@ -37,9 +37,9 @@ public class CompanyService {
         return companyRepository.findAll().stream().map(CompanyMapper::map).collect(Collectors.toList());
     }
 
-    public CompanyResponse findCompanyByID(Integer companyID) {
+    public CompanyResponse findCompanyByID(Integer companyID) throws NoSuchDataException {
         Company company = this.companyRepository.findById(companyID).orElse(null);
-
+        if(company==null) throw new NoSuchDataException();
 
         return CompanyMapper.map(company);
     }
