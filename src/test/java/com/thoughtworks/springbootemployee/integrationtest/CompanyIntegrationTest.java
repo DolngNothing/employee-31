@@ -124,7 +124,8 @@ public class CompanyIntegrationTest {
         //given
         Company company = new Company(1, "oocw", null);
         Company savedCompany = companyRepository.save(company);
-        String createdCompany = "{ \n" +
+        String createdCompany = "{\n" +
+                "    \"id\": "+savedCompany.getId()+",\n" +
                 "    \"name\": \"gdsa\",\n" +
                 "    \"employees\": null\n" +
                 "}";
