@@ -61,12 +61,11 @@ public class CompanyService {
 
     public CompanyResponse addCompany(CompanyRequest companyRequest) {
         Company map = CompanyMapper.map(companyRequest);
-        System.out.println(map);
         Company save = this.companyRepository.save(map);
         return CompanyMapper.map(save);
     }
 
-    public CompanyResponse updateCompany(int companyID, CompanyRequest newCompany) {
+    public CompanyResponse updateCompany(int companyID, CompanyRequest newCompany)  {
         Company company = this.companyRepository.findById(companyID).orElse(null);
         if(newCompany!=null){
             if(newCompany.getName()!=null){

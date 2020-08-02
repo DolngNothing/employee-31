@@ -180,4 +180,16 @@ public class CompanyServiceTest {
         //then
         assertThrows(IllegalOperationException.class, () -> companyService.findCompaniesByPageAndPageSize(-1,-1));
     }
+
+    @Test
+    void should_throw_Illegal_when_update_company_given_diff_company_id() {
+        //given
+        CompanyRepository companyRepository = mock(CompanyRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository, null);
+        given(companyRepository.findById(1)).willReturn(Optional.of(new Company(1, "OOCL", null)));
+        CompanyRequest company = new CompanyRequest(2, "CargoSmart", null);
+
+        //then
+        assertThrows(IllegalOperationException.class, () -> companyService.updateCompany(1, company));
+    }
 }
