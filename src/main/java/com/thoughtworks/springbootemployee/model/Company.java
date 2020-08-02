@@ -27,6 +27,10 @@ public class Company {
         return employeeNumber;
     }
 
+    public void setEmployeeNumber(Integer employeeNumber) {
+        this.employeeNumber = employeeNumber;
+    }
+
     public List<Employee> getEmployees() {
         return employees;
     }

@@ -3,10 +3,8 @@ package com.thoughtworks.springbootemployee.controller;
 import com.thoughtworks.springbootemployee.dto.CompanyRequest;
 import com.thoughtworks.springbootemployee.dto.CompanyResponse;
 import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.exception.IllegalOperationException;
 import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
-import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
-import com.thoughtworks.springbootemployee.model.Company;
-import com.thoughtworks.springbootemployee.model.Employee;
 import com.thoughtworks.springbootemployee.service.CompanyService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,7 +22,7 @@ public class CompanyController {
     }
 
     @GetMapping()
-    List<CompanyResponse> getCompanies() {
+    List<CompanyResponse> getCompanies() throws NoSuchDataException {
         return this.companyService.findAllCompanies();
     }
 
@@ -39,7 +37,7 @@ public class CompanyController {
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    Page<CompanyResponse> getCompaniesByPageAndSize(int page, int pageSize) {
+    Page<CompanyResponse> getCompaniesByPageAndSize(int page, int pageSize) throws IllegalOperationException {
         return this.companyService.findCompaniesByPageAndPageSize(--page, pageSize);
     }
 

@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 public class CompanyServiceTest {
 
     @Test
-    void should_return_all_companies_when_find_all_given() {
+    void should_return_all_companies_when_find_all_given() throws NoSuchDataException {
         //given
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
@@ -78,7 +78,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void should_get_page_companies_when_get_by_page_given_page_pageSize() {
+    void should_get_page_companies_when_get_by_page_given_page_pageSize() throws IllegalOperationException {
         //given
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
@@ -145,7 +145,8 @@ public class CompanyServiceTest {
     void should_throw_NoSuchDataException_when_find_by_id_given_wrong_company_id() {
         //given
         CompanyRepository companyRepository = Mockito.mock(CompanyRepository.class);
-        CompanyService companyService = new CompanyService(companyRepository);
+        EmployeeRepository employeeRepository=Mockito.mock(EmployeeRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository, employeeRepository);
         given(companyRepository.findById(1)).willReturn(Optional.of(new Company(1,"oocl",null)));
 
         //when
@@ -156,9 +157,9 @@ public class CompanyServiceTest {
 
     @Test
     void should_throw_NoSuchDataException_when_find_employees_by_company_id_given_wrong_company_id() {
-        //given
         CompanyRepository companyRepository = Mockito.mock(CompanyRepository.class);
-        CompanyService companyService = new CompanyService(companyRepository);
+        EmployeeRepository employeeRepository=Mockito.mock(EmployeeRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository, employeeRepository);
         given(companyRepository.findById(1)).willReturn(Optional.of(new Company(1,"oocl",null)));
 
         //when
@@ -169,9 +170,9 @@ public class CompanyServiceTest {
 
     @Test
     void should_throw_Illegal_when_find_employees_by_page_given_0_pageSize() {
-        //given
         CompanyRepository companyRepository = Mockito.mock(CompanyRepository.class);
-        CompanyService companyService = new CompanyService(companyRepository);
+        EmployeeRepository employeeRepository=Mockito.mock(EmployeeRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository, employeeRepository);
         given(companyRepository.findAll()).willReturn(Collections.emptyList());
 
         //when

@@ -45,7 +45,7 @@ public class CompanyIntegrationTest {
     @Test
     void should_return_companies_when_hit_companies_endpoint_given_nothing() throws Exception {
         //given
-        List<Company> companies = Collections.singletonList(new Company(1, "oocl", null));
+        List<Company> companies = Collections.singletonList(new Company(1, "oocl", Collections.emptyList()));
         companyRepository.saveAll(companies);
         //when
         mockMvc.perform(get("/companies"))

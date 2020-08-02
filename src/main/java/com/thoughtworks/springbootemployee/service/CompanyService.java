@@ -3,6 +3,7 @@ package com.thoughtworks.springbootemployee.service;
 import com.thoughtworks.springbootemployee.dto.CompanyRequest;
 import com.thoughtworks.springbootemployee.dto.CompanyResponse;
 import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.exception.IllegalOperationException;
 import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
 import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
 import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
@@ -25,13 +26,6 @@ public class CompanyService {
     private CompanyRepository companyRepository;
     private EmployeeRepository employeeRepository;
 
-    public CompanyService() {
-    }
-
-    public CompanyService(CompanyRepository companyRepository) {
-        this.companyRepository = companyRepository;
-    }
-
     public CompanyService(CompanyRepository companyRepository, EmployeeRepository employeeRepository) {
         this.companyRepository = companyRepository;
         this.employeeRepository=employeeRepository;
@@ -39,8 +33,10 @@ public class CompanyService {
     }
 
 
-    public List<CompanyResponse> findAllCompanies() {
-        return companyRepository.findAll().stream().map(CompanyMapper::map).collect(Collectors.toList());
+    public List<CompanyResponse> findAllCompanies() throws NoSuchDataException {
+        List<Company> all = companyRepository.findAll();
+        if(all==null) throw new NoSuchDataException();
+        return all.stream().map(CompanyMapper::map).collect(Collectors.toList());
     }
 
     public CompanyResponse findCompanyByID(Integer companyID) throws NoSuchDataException {
@@ -58,12 +54,14 @@ public class CompanyService {
         return employees.stream().map(EmployeeMapper::map).collect(Collectors.toList());
     }
 
-    public Page<CompanyResponse> findCompaniesByPageAndPageSize(int page, int pageSize) {
+    public Page<CompanyResponse> findCompaniesByPageAndPageSize(int page, int pageSize) throws IllegalOperationException {
+        if(page<0||pageSize<1) throw new IllegalOperationException();
         return new PageImpl<>(this.companyRepository.findAll(PageRequest.of(page,pageSize)).stream().map(CompanyMapper::map).collect(Collectors.toList()));
     }
 
     public CompanyResponse addCompany(CompanyRequest companyRequest) {
         Company map = CompanyMapper.map(companyRequest);
+        System.out.println(map);
         Company save = this.companyRepository.save(map);
         return CompanyMapper.map(save);
     }
