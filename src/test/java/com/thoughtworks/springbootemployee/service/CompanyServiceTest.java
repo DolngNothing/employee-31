@@ -192,4 +192,16 @@ public class CompanyServiceTest {
         //then
         assertThrows(IllegalOperationException.class, () -> companyService.updateCompany(1, company));
     }
+
+    @Test
+    void should_throw_NoSuchData_when_update_company_given_diff_company_id() {
+        //given
+        CompanyRepository companyRepository = mock(CompanyRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository, null);
+        given(companyRepository.findById(1)).willReturn(null);
+        CompanyRequest company = new CompanyRequest(1, "CargoSmart", null);
+
+        //then
+        assertThrows(NoSuchDataException.class, () -> companyService.updateCompany(1, company));
+    }
 }
