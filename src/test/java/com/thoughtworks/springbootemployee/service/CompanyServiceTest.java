@@ -108,7 +108,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void should_return_company_when_update_given_company() throws IllegalOperationException {
+    void should_return_company_when_update_given_company() throws IllegalOperationException, NoSuchDataException {
         //given
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
@@ -198,7 +198,6 @@ public class CompanyServiceTest {
         //given
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
-        given(companyRepository.findById(1)).willReturn(null);
         CompanyRequest company = new CompanyRequest(1, "CargoSmart", null);
 
         //then
