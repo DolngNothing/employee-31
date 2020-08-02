@@ -48,7 +48,9 @@ public class EmployeeService {
 }
 
     public List<EmployeeResponse> findEmployeesByGender(String gender) {
-        return this.employeeRepository.findAllByGender(gender).stream().map(EmployeeMapper::map).collect(Collectors.toList());
+        List<EmployeeResponse> genderEmployees = this.employeeRepository.findAllByGender(gender).stream().map(EmployeeMapper::map).collect(Collectors.toList());
+
+        return genderEmployees;
     }
 
     public EmployeeResponse findEmployeeByID(Integer employeeID) throws NoSuchDataException {

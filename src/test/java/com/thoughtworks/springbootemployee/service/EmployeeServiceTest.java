@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -150,6 +151,18 @@ public class EmployeeServiceTest {
     }
 
     @Test
+    void should_throw_NoSuchDataException_when_get_by_gender_given_no_such_gender() {
+        //given
+        EmployeeRepository employeeRepository = Mockito.mock(EmployeeRepository.class);
+        EmployeeService employeeService = new EmployeeService(employeeRepository);
+
+
+        given(employeeRepository.findAllByGender(any(String.class))).willReturn(Collections.singletonList(new Employee(1, 18, "female", "eva", 10000)));
+        //then when
+        assertThrows(IllegalOperationException.class, () -> employeeService.findEmployeesByGender("mm"));
+    }
+
+    @Test
     void should_throw_IllegalOperationException_when_get_by_page_given_page_pageSize() {
         //given
         EmployeeRepository employeeRepository = Mockito.mock(EmployeeRepository.class);
@@ -160,7 +173,6 @@ public class EmployeeServiceTest {
         //then
         assertThrows(IllegalOperationException.class, () -> employeeService.findEmployeesByPageAndPageSize(0,0));
     }
-
 
 
     @Test
