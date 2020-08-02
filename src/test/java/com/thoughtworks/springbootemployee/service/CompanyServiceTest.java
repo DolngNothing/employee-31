@@ -4,6 +4,7 @@ import com.thoughtworks.springbootemployee.dto.CompanyRequest;
 import com.thoughtworks.springbootemployee.dto.CompanyResponse;
 import com.thoughtworks.springbootemployee.dto.EmployeeRequest;
 import com.thoughtworks.springbootemployee.dto.EmployeeResponse;
+import com.thoughtworks.springbootemployee.exception.IllegalOperationException;
 import com.thoughtworks.springbootemployee.exception.NoSuchDataException;
 import com.thoughtworks.springbootemployee.mapper.CompanyMapper;
 import com.thoughtworks.springbootemployee.mapper.EmployeeMapper;
@@ -164,5 +165,18 @@ public class CompanyServiceTest {
 
         //then
         assertThrows(NoSuchDataException.class, () -> companyService.findEmployeesByCompanyID(1));
+    }
+
+    @Test
+    void should_throw_Illegal_when_find_employees_by_page_given_0_pageSize() {
+        //given
+        CompanyRepository companyRepository = Mockito.mock(CompanyRepository.class);
+        CompanyService companyService = new CompanyService(companyRepository);
+        given(companyRepository.findAll()).willReturn(Collections.emptyList());
+
+        //when
+
+        //then
+        assertThrows(IllegalOperationException.class, () -> companyService.findCompaniesByPageAndPageSize(-1,-1));
     }
 }
