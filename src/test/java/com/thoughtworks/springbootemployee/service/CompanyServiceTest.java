@@ -163,6 +163,6 @@ public class CompanyServiceTest {
         //when
 
         //then
-        assertThrows(NoSuchDataException.class, () -> companyService.findCompanyByID(1));
+        assertThrows(NoSuchDataException.class, () -> companyService.findEmployeesByCompanyID(1));
     }
 }
