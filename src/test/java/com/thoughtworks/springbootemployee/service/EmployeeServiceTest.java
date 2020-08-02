@@ -62,7 +62,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void should_return_gender_employees_when_find_by_gender_given_gender() {
+    void should_return_gender_employees_when_find_by_gender_given_gender() throws NoSuchDataException {
         //given
         EmployeeRepository employeeRepository = Mockito.mock(EmployeeRepository.class);
         EmployeeService employeeService = new EmployeeService(employeeRepository);
@@ -159,7 +159,7 @@ public class EmployeeServiceTest {
 
         given(employeeRepository.findAllByGender(any(String.class))).willReturn(Collections.singletonList(new Employee(1, 18, "female", "eva", 10000)));
         //then when
-        assertThrows(IllegalOperationException.class, () -> employeeService.findEmployeesByGender("mm"));
+        assertThrows(NoSuchDataException.class, () -> employeeService.findEmployeesByGender("mm"));
     }
 
     @Test

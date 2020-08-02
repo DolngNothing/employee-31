@@ -47,7 +47,9 @@ public class EmployeeService {
         return new PageImpl<>(this.employeeRepository.findAll(PageRequest.of(page, pageSize)).stream().map(EmployeeMapper::map).collect(Collectors.toList()));
 }
 
-    public List<EmployeeResponse> findEmployeesByGender(String gender) {
+    public List<EmployeeResponse> findEmployeesByGender(String gender) throws NoSuchDataException {
+        if(!(gender.equals("female")||gender.equals("male"))) throw new NoSuchDataException();
+
         List<EmployeeResponse> genderEmployees = this.employeeRepository.findAllByGender(gender).stream().map(EmployeeMapper::map).collect(Collectors.toList());
 
         return genderEmployees;

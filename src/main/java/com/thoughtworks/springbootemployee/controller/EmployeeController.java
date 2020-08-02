@@ -35,7 +35,7 @@ public class EmployeeController {
     }
 
     @GetMapping(params = {"gender"})
-    public List<EmployeeResponse> getAllEmployeesByGender(String gender) {
+    public List<EmployeeResponse> getAllEmployeesByGender(String gender) throws NoSuchDataException {
         return this.employeeService.findEmployeesByGender(gender);
     }
 
