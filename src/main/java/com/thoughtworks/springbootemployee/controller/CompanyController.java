@@ -48,7 +48,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    CompanyResponse updateCompany(@RequestBody CompanyRequest newCompany, @PathVariable("id") Integer id) {
+    CompanyResponse updateCompany(@RequestBody CompanyRequest newCompany, @PathVariable("id") Integer id) throws IllegalOperationException {
         return this.companyService.updateCompany(id,newCompany);
     }
 

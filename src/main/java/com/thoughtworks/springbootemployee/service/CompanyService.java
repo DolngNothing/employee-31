@@ -65,8 +65,9 @@ public class CompanyService {
         return CompanyMapper.map(save);
     }
 
-    public CompanyResponse updateCompany(int companyID, CompanyRequest newCompany)  {
+    public CompanyResponse updateCompany(int companyID, CompanyRequest newCompany) throws IllegalOperationException {
         Company company = this.companyRepository.findById(companyID).orElse(null);
+        if(company.getId()!=newCompany.getId()) throw new IllegalOperationException();
         if(newCompany!=null){
             if(newCompany.getName()!=null){
                 company.setName(newCompany.getName());

@@ -108,7 +108,7 @@ public class CompanyServiceTest {
     }
 
     @Test
-    void should_return_company_when_update_given_company() {
+    void should_return_company_when_update_given_company() throws IllegalOperationException {
         //given
         CompanyRepository companyRepository = mock(CompanyRepository.class);
         CompanyService companyService = new CompanyService(companyRepository, null);
